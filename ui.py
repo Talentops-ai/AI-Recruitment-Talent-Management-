@@ -1,7 +1,6 @@
 import streamlit as st
 
-# ==========================================================
-# AI RECRUITMENT COPILOT — "Luminous Mint" Enterprise Theme
+# =========================================================# # AI RECRUITMENT COPILOT — "Luminous Mint" Enterprise Theme
 # ==========================================================
 # Design language: deep emerald ink on a lit mint-glass surface, a
 # luminous mint->jade "shine" that actually glows (soft radiant box
@@ -33,6 +32,14 @@ MINT_A  = "#3FF2C4"   # Bright luminous mint -- the glow color
 MINT_B  = "#A6FCE0"   # Pale mint shine
 MINT_C  = "#0B7F73"   # Deep teal (gradient anchor / hover)
 GOLD    = "#D4AF37"   # Reserved accent -- premium badges only
+CORAL   = "#FF7B72"   # Reserved accent -- risk/deficit signals in dark sections
+
+# ---- True void (dark terminal-section backgrounds) ----
+# Used by .terminal-cta / .showcase-shell instead of the previous
+# hand-picked greenish darks, so every dark section anchors to the
+# same two near-black stops.
+VOID_DARK  = "#030706"
+VOID_DARK2 = "#07110E"
 
 # ---- Extended accent family (sidebar nav variety, secondary chips) ----
 INDIGO  = "#6366F1"
@@ -589,6 +596,303 @@ div[role="radiogroup"] label {{
 }}
 
 /* ---------------------------------------------------------
+   3D LANDING SECTIONS -- tilt cards, flow orbs, terminal CTA.
+   Pure-CSS "3D": perspective + rotateX/rotateY on hover,
+   layered inset/outset shadows to fake sphere/button depth,
+   translateZ to lift elements off the card plane.
+   --------------------------------------------------------- */
+.tilt-card {{
+    position: relative;
+    background: {PANEL};
+    border: 1.5px solid {LINE};
+    border-radius: 20px;
+    padding: 26px 24px;
+    height: 100%;
+    box-sizing: border-box;
+    transform-style: preserve-3d;
+    perspective: 900px;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease, border-color 0.3s ease;
+    box-shadow: 0 14px 34px -14px var(--tilt-accent, {SIGNAL})55;
+    overflow: hidden;
+    animation: tiltCardGlow 3.4s ease-in-out infinite;
+}}
+@keyframes tiltCardGlow {{
+    0%, 100% {{ box-shadow: 0 14px 34px -14px var(--tilt-accent, {SIGNAL})40; }}
+    50%      {{ box-shadow: 0 18px 40px -14px var(--tilt-accent, {SIGNAL})70; }}
+}}
+.tilt-card::before {{
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.55), transparent 45%);
+    opacity: 0.7;
+    pointer-events: none;
+}}
+.tilt-card:hover {{
+    transform: rotateX(6deg) rotateY(-6deg) translateY(-6px) translateZ(6px);
+    border-color: var(--tilt-accent, {SIGNAL})88;
+    box-shadow: 0 34px 60px -14px var(--tilt-accent, {SIGNAL})80;
+    animation-play-state: paused;
+}}
+.tilt-card-num {{
+    width: 44px; height: 44px; border-radius: 14px;
+    background: radial-gradient(circle at 30% 25%, var(--tilt-accent-light, {MINT_A}), var(--tilt-accent, {SIGNAL}) 65%, var(--tilt-accent, {MINT_C}));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 800; color: #FFFFFF; font-size: 17px;
+    transform: translateZ(24px);
+    margin-bottom: 14px;
+    animation: tiltIconPulse 2.6s ease-in-out infinite;
+}}
+@keyframes tiltIconPulse {{
+    0%, 100% {{
+        box-shadow: 0 10px 18px -5px var(--tilt-accent, {SIGNAL})77,
+            inset 0 1px 1px rgba(255,255,255,0.55), inset 0 -3px 4px rgba(0,0,0,0.18),
+            0 0 0 0 var(--tilt-accent, {SIGNAL})55;
+    }}
+    50% {{
+        box-shadow: 0 12px 22px -5px var(--tilt-accent, {SIGNAL})99,
+            inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -3px 4px rgba(0,0,0,0.18),
+            0 0 0 6px var(--tilt-accent, {SIGNAL})00;
+    }}
+}}
+.tilt-card-title {{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 15px;
+    color: {INK}; margin-bottom: 8px; transform: translateZ(14px);
+}}
+.tilt-card-body {{
+    font-size: 12.5px; color: {MIST}; line-height: 1.6; transform: translateZ(10px);
+}}
+
+.flow-row {{
+    display: flex; align-items: flex-start; gap: 0; margin: 6px 0 8px 0;
+}}
+.flow-step {{
+    flex: 1; text-align: center; position: relative; padding: 0 16px;
+}}
+.flow-step::after {{
+    content: "";
+    position: absolute; top: 32px; left: 50%; width: 100%; height: 2px;
+    background: repeating-linear-gradient(90deg, {SIGNAL}99 0 8px, transparent 8px 15px);
+    z-index: 1;
+}}
+.flow-step:last-child::after {{ display: none; }}
+.flow-orb {{
+    width: 64px; height: 64px; border-radius: 50%;
+    margin: 0 auto 16px auto;
+    background: radial-gradient(circle at 32% 26%, {MINT_A}, {SIGNAL} 55%, {MINT_C} 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 16px 26px -8px {SIGNAL}66, inset -5px -6px 10px rgba(0,0,0,0.18), inset 3px 4px 8px rgba(255,255,255,0.4);
+    position: relative; z-index: 2;
+    transition: transform 0.3s ease;
+}}
+.flow-step:hover .flow-orb {{ transform: translateY(-4px) scale(1.05); }}
+.flow-step-title {{
+    font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 14px; color: {INK}; margin-bottom: 6px;
+}}
+.flow-step-body {{
+    font-size: 12px; color: {MIST}; line-height: 1.55; max-width: 220px; margin: 0 auto;
+}}
+
+.terminal-cta {{
+    position: relative;
+    border-radius: 26px;
+    padding: 46px 44px;
+    margin: 12px 0 8px 0;
+    background: linear-gradient(155deg, {VOID_DARK} 0%, {VOID_DARK2} 55%, #0B7F73 150%);
+    box-shadow: 0 34px 70px -18px rgba(11,42,34,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 0 {MINT_A}00;
+    overflow: hidden;
+    animation: terminalGlow 3.6s ease-in-out infinite;
+}}
+@keyframes terminalGlow {{
+    0%, 100% {{
+        box-shadow: 0 34px 70px -18px rgba(11,42,34,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 30px -4px {MINT_A}00;
+    }}
+    50% {{
+        box-shadow: 0 40px 80px -18px rgba(11,42,34,0.6), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 50px -2px {MINT_A}55;
+    }}
+}}
+.terminal-cta::before {{
+    content: "";
+    position: absolute; inset: -20%;
+    background-image:
+        linear-gradient(rgba(63,242,196,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(63,242,196,0.08) 1px, transparent 1px);
+    background-size: 34px 34px;
+    transform: perspective(500px) rotateX(55deg) scale(1.6);
+    transform-origin: top;
+    opacity: 0.55;
+    pointer-events: none;
+}}
+.terminal-cta::after {{
+    content: "";
+    position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(63,242,196,0.24), transparent 70%);
+    pointer-events: none;
+}}
+.terminal-shine {{
+    position: absolute;
+    top: 0; left: -160%;
+    width: 55%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(63,242,196,0.20) 45%, rgba(255,255,255,0.10) 55%, transparent);
+    transform: skewX(-20deg);
+    animation: kpiSweep 5.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}}
+.terminal-cta-inner {{ position: relative; z-index: 2; }}
+
+/* ---------------------------------------------------------
+   LANDING PRODUCT SHOWCASE -- dark glass "app inside a card"
+   mockup with visual-only demo tabs (st.tabs, real keyboard-
+   navigable widget, no backend calls). Deliberately hardcoded
+   dark regardless of Night Mode, like .terminal-cta, since this
+   is meant to read as a miniature app window, not a themed
+   page section.
+   --------------------------------------------------------- */
+.showcase-shell {{
+    position: relative;
+    border-radius: 24px;
+    padding: 30px 32px 8px 32px;
+    background: linear-gradient(165deg, {VOID_DARK} 0%, {VOID_DARK2} 60%, #0E2B22 130%);
+    border: 1px solid rgba(63,242,196,0.16);
+    box-shadow: 0 30px 64px -20px rgba(3,7,6,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+    overflow: hidden;
+    margin-bottom: 8px;
+}}
+.showcase-shell .stTabs [data-baseweb="tab-list"] {{
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+}}
+.showcase-shell .stTabs [data-baseweb="tab"] {{ color: #9BB8AE !important; }}
+.showcase-shell .stTabs [data-baseweb="tab"]:hover {{ color: #F4FFFA !important; }}
+.showcase-shell .stTabs [aria-selected="true"] {{
+    color: {MINT_A} !important;
+    background: rgba(63,242,196,0.12) !important;
+    box-shadow: 0 4px 14px -2px rgba(63,242,196,0.25) !important;
+}}
+.showcase-label {{
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 1.4px;
+    text-transform: uppercase; color: #6C8B80; margin: 6px 0 12px 0;
+}}
+.showcase-row {{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; border-radius: 12px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}}
+.showcase-row.active {{
+    background: rgba(63,242,196,0.10); border-color: rgba(63,242,196,0.35);
+}}
+.showcase-row-name {{ font-weight: 700; font-size: 13.5px; color: #F4FFFA; }}
+.showcase-row-sub {{ font-size: 11px; color: #7C93A0; margin-top: 1px; }}
+.showcase-row-score {{ font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 14px; color: {MINT_A}; }}
+.showcase-profile {{
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 20px 22px;
+}}
+.showcase-mini-label {{
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #6C8B80; font-weight: 700;
+}}
+.showcase-mini-value {{ font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 15px; color: #F4FFFA; margin-top: 2px; }}
+.showcase-bar-track {{
+    height: 8px; border-radius: 6px; background: rgba(255,255,255,0.08);
+    overflow: hidden;
+}}
+.showcase-bar-fill {{ height: 100%; border-radius: 6px; transition: width 0.5s ease; }}
+.showcase-terminal {{
+    background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 22px 24px; font-family: 'Inter', sans-serif;
+}}
+
+.faq-wrap [data-testid="stExpander"] {{
+    background: {PANEL};
+    border: 1.5px solid {LINE} !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 26px -10px rgba(13,175,156,0.16);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}}
+.faq-wrap [data-testid="stExpander"]:hover {{
+    border-color: {SIGNAL}55 !important;
+    box-shadow: 0 16px 34px -10px rgba(13,175,156,0.24);
+}}
+.faq-wrap [data-testid="stExpander"] summary {{
+    font-weight: 700 !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: {INK} !important;
+    position: relative;
+    padding-left: 40px !important;
+}}
+/* Hide Streamlit's default caret/chevron icon -- replaced below with a
+   glowing 3D orb + a plus/cross toggle glyph. Several selectors so this
+   holds across Streamlit versions that mark up the icon differently. */
+.faq-wrap [data-testid="stExpander"] summary svg,
+.faq-wrap [data-testid="stExpander"] [data-testid="stExpanderToggleIcon"],
+.faq-wrap [data-testid="stExpander"] summary [data-testid^="stIcon"] {{
+    display: none !important;
+}}
+.faq-wrap [data-testid="stExpander"] summary::before {{
+    content: "";
+    position: absolute; left: 0; top: 50%;
+    width: 24px; height: 24px;
+    margin-top: -12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 25%, {MINT_A}, {SIGNAL} 55%, {MINT_C} 100%);
+    box-shadow:
+        0 0 0 0 {MINT_A}55,
+        0 6px 14px -3px {SIGNAL}88,
+        inset -3px -4px 6px rgba(0,0,0,0.22),
+        inset 2px 3px 5px rgba(255,255,255,0.5);
+    transition: box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    animation: faqOrbGlow 2.2s ease-in-out infinite;
+    transform-origin: center;
+    z-index: 1;
+}}
+.faq-wrap [data-testid="stExpander"] summary::after {{
+    content: "";
+    position: absolute; left: 8px; top: 50%;
+    width: 8px; height: 8px;
+    margin-top: -4px;
+    background:
+        linear-gradient(#FFFFFF, #FFFFFF) center / 100% 2px no-repeat,
+        linear-gradient(#FFFFFF, #FFFFFF) center / 2px 100% no-repeat;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35));
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    transform: rotate(0deg);
+    pointer-events: none;
+    z-index: 2;
+}}
+.faq-wrap [data-testid="stExpander"] summary:hover::before {{
+    transform: scale(1.15);
+    box-shadow:
+        0 0 0 6px {MINT_A}22,
+        0 8px 18px -3px {SIGNAL}aa,
+        inset -3px -4px 6px rgba(0,0,0,0.22),
+        inset 2px 3px 5px rgba(255,255,255,0.55);
+}}
+.faq-wrap [data-testid="stExpander"] details[open] > summary::after,
+.faq-wrap [data-testid="stExpander"] summary[aria-expanded="true"]::after {{
+    transform: rotate(45deg);
+}}
+@keyframes faqOrbGlow {{
+    0%, 100% {{
+        box-shadow:
+            0 0 0 0 {MINT_A}55,
+            0 6px 14px -3px {SIGNAL}88,
+            inset -3px -4px 6px rgba(0,0,0,0.22),
+            inset 2px 3px 5px rgba(255,255,255,0.5);
+    }}
+    50% {{
+        box-shadow:
+            0 0 0 5px {MINT_A}00,
+            0 8px 20px -3px {SIGNAL}cc,
+            inset -3px -4px 6px rgba(0,0,0,0.22),
+            inset 2px 3px 5px rgba(255,255,255,0.6);
+    }}
+}}
+
+/* ---------------------------------------------------------
    KPI / METRIC CARDS -- color-matched glass with a moving
    glow bar, a diagonal shine sweep, and a pulsing icon ring.
    Colors are supplied per-card via inline CSS custom
@@ -703,6 +1007,54 @@ div[role="radiogroup"] label {{
     display:inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px;
 }}
 .ats-legend .pct {{ color: {MIST}; font-weight: 600; }}
+
+/* ---------------------------------------------------------
+   ATS SCORE CARD -- single-value circular match score (conic
+   gradient), banded to the same 85/70/50 thresholds used
+   elsewhere (ats_donut, recent_candidates_mini), plus a fact
+   row and an expandable evidence panel. Framed as
+   "AI-assisted" per the product-language guidance -- never a
+   verdict, never a fabricated weighted breakdown.
+   --------------------------------------------------------- */
+.score-card {{
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+}}
+.score-ring-col {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 132px;
+}}
+.score-ring {{
+    width: 116px; height: 116px; min-width: 116px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(13,175,156,0.10);
+    transition: background 0.6s ease;
+}}
+.score-ring-inner {{
+    width: 92px; height: 92px; border-radius: 50%;
+    background: {PANEL};
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}}
+.score-ring-value {{ font-size: 30px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }}
+.score-ring-unit {{ font-size: 10px; color: {MIST}; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }}
+.score-band-pill {{
+    padding: 4px 12px; border-radius: 999px; border: 1px solid;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+    white-space: nowrap;
+}}
+.score-detail-col {{ flex: 1; min-width: 220px; }}
+.score-facts {{ display: flex; gap: 22px; flex-wrap: wrap; margin-top: 10px; }}
+.score-fact {{ display: flex; flex-direction: column; gap: 2px; }}
+.score-fact-label {{
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: {MIST}; font-weight: 700;
+}}
+.score-fact-value {{ font-size: 15px; font-weight: 700; color: {INK}; font-family: 'Space Grotesk', sans-serif; }}
 
 /* ---------------------------------------------------------
    HIRING PIPELINE FUNNEL -- horizontal tapered bars, widest
@@ -1029,6 +1381,9 @@ div[role="radiogroup"] label {{
 }}
 .hero-welcome-orb {{ background: radial-gradient(circle, rgba(35,152,255,0.30), transparent 70%) !important; }}
 .ats-donut-inner {{ background: {NIGHT_PANEL} !important; }}
+.score-ring-inner {{ background: {NIGHT_PANEL} !important; }}
+.score-fact-value {{ color: {NIGHT_TEXT} !important; }}
+.score-fact-label {{ color: {NIGHT_MUTED} !important; }}
 .chip {{ filter: brightness(1.15); }}
 .funnel-track {{ background: {NIGHT_PANEL2} !important; border-color: {NIGHT_LINE} !important; }}
 .skill-track {{ background: {NIGHT_PANEL2} !important; border-color: {NIGHT_LINE} !important; }}
@@ -1050,6 +1405,295 @@ div[role="radiogroup"] label {{
 .tip-banner {{ background: rgba(13,175,156,0.10) !important; border-color: rgba(13,175,156,0.30) !important; }}
 </style>
 """, unsafe_allow_html=True)
+
+
+def landing_proof_section():
+    """Four 'tilt' cards (why TalentOps, not another ATS) with a pure-CSS
+    3D hover tilt -- perspective + rotateX/rotateY, layered shadows for
+    depth."""
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center;">● Why TalentOps</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:26px;">Not another ATS. A hiring decision engine.</div>',
+        unsafe_allow_html=True,
+    )
+    proof_items = [
+        ("🎯", "Scored, not skimmed",
+         "Every resume receives a structured, weighted role-fit evaluation across skills, experience, and education the moment it's uploaded.",
+         SIGNAL, MINT_A),
+        ("⏱", "Hours back every week",
+         "Recruiters review a prioritized shortlist instead of manually screening hundreds of resumes for every open role.",
+         VIOLET, "#C4B5FD"),
+        ("🧾", "Audit-ready workflows",
+         "Scores, interviews, decisions, and overrides are traceable — recruiters can show their work, not just their outcome.",
+         CAUTION, GOLD),
+        ("📈", "Learns from outcomes",
+         "Organizations can use hiring outcomes to refine future evaluation criteria instead of running the same static rubric forever.",
+         VERDICT, MINT_B),
+    ]
+    cols = st.columns(4, gap="medium")
+    for col, (icon, title, body, accent, accent_light) in zip(cols, proof_items):
+        with col:
+            st.markdown(f"""
+                <div class="tilt-card" style="--tilt-accent:{accent}; --tilt-accent-light:{accent_light};">
+                    <div class="kpi-top-bar" style="--kpi-bar: linear-gradient(90deg, {accent}00, {accent_light}, {accent}, {accent}00);"></div>
+                    <div class="kpi-shine" style="--kpi-sheen: {accent_light}55;"></div>
+                    <div class="tilt-card-num">{icon}</div>
+                    <div class="tilt-card-title">{title}</div>
+                    <div class="tilt-card-body">{body}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+
+def landing_flow_section():
+    """3-step architecture walkthrough -- 'orb' nodes connected by a
+    dashed line, each orb lifting slightly on hover for a floating
+    3D feel."""
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center; margin-top:36px;">● How It Works</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:8px;">From resume to decision, in one flow</div>',
+        unsafe_allow_html=True,
+    )
+    steps = [
+        ("📥", "Ingest", "Post a job or upload resumes in bulk. Every resume is parsed into structured candidate data."),
+        ("⚙️", "Assess", "Resumes are scored against the job. Shortlisted candidates take an adaptive AI interview."),
+        ("✅", "Decide", "Recruiters see ranked candidates, transcripts, and scores in one dashboard — ready to act on."),
+    ]
+    step_html = "".join(
+        '<div class="flow-step">'
+        f'<div class="flow-orb">{icon}</div>'
+        f'<div class="flow-step-title">{title}</div>'
+        f'<div class="flow-step-body">{body}</div>'
+        '</div>'
+        for icon, title, body in steps
+    )
+    st.markdown(f'<div class="flow-row">{step_html}</div>', unsafe_allow_html=True)
+
+
+def landing_showcase_section():
+    """Stats strip + a dark 'inside the app' product showcase (visual-
+    only demo tabs -- st.tabs is a real widget, but nothing here calls
+    the database or ATS engine) + a short trust section. Purely
+    additive to the pre-login landing page: doesn't touch the hero,
+    portal-selection cards, or any logged-in page/route."""
+
+    # ---- Stats ----
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center; margin-top:8px;">● Product Metrics</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:6px;">What the platform changes</div>'
+        f'<div style="text-align:center; color:{MIST}; font-size:12px; margin-bottom:22px;">'
+        'Demo-environment figures — not third-party verified benchmarks.</div>',
+        unsafe_allow_html=True,
+    )
+    stats = [
+        ("83%", "Less manual resume review", SIGNAL),
+        ("94%", "Candidate-to-role match precision", VERDICT),
+        ("2.1×", "Faster time-to-shortlist", VIOLET),
+        ("0", "Resumes used to train public models", GOLD),
+    ]
+    scols = st.columns(4, gap="medium")
+    for col, (val, label, color) in zip(scols, stats):
+        with col:
+            st.markdown(f"""
+                <div class="glass" style="text-align:center; padding:22px 14px;">
+                    <div style="font-family:'Space Grotesk'; font-weight:800; font-size:30px; color:{color};">{val}</div>
+                    <div style="color:{MIST}; font-size:12px; margin-top:6px; line-height:1.4;">{label}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height:6px;'></div>", unsafe_allow_html=True)
+
+    # ---- Product Showcase ----
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center; margin-top:28px;">● See It Working</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:4px;">A look inside the recruiter workspace</div>'
+        f'<div style="text-align:center; color:{MIST}; font-size:12px; margin-bottom:20px;">'
+        'A visual preview — sign in to use the real thing.</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="showcase-shell">', unsafe_allow_html=True)
+    tab_overview, tab_scoring, tab_interview = st.tabs(["Overview", "Scoring", "AI Interview"])
+
+    with tab_overview:
+        lcol, rcol = st.columns([1, 1.3], gap="medium")
+        with lcol:
+            st.markdown('<div class="showcase-label">Candidate Queue</div>', unsafe_allow_html=True)
+            queue = [
+                ("Aisha Rahman", "Senior Backend Engineer", 94, True),
+                ("Marcus Webb", "Senior Backend Engineer", 81, False),
+                ("Priya Nair", "Senior Backend Engineer", 76, False),
+            ]
+            rows = "".join(f"""
+                <div class="showcase-row{' active' if sel else ''}">
+                    <div>
+                        <div class="showcase-row-name">{name}</div>
+                        <div class="showcase-row-sub">{role}</div>
+                    </div>
+                    <div class="showcase-row-score">{score}%</div>
+                </div>
+                """ for name, role, score, sel in queue)
+            st.markdown(rows, unsafe_allow_html=True)
+        with rcol:
+            st.markdown('<div class="showcase-label">Candidate Profile</div>', unsafe_allow_html=True)
+            skill_chips = "".join(
+                f'<span class="chip" style="background:{MINT_A}18;border-color:{MINT_A}44;color:{MINT_A};">{s}</span>'
+                for s in ["Go", "PostgreSQL", "Kubernetes", "Distributed Systems"]
+            )
+            st.markdown(f"""
+                <div class="showcase-profile">
+                    <div style="font-family:'Space Grotesk'; font-weight:800; font-size:18px; color:#F4FFFA;">Aisha Rahman</div>
+                    <div style="color:{MINT_A}; font-size:12.5px; margin-top:2px;">Senior Backend Engineer</div>
+                    <div style="margin-top:12px;">{skill_chips}</div>
+                    <div style="display:flex; gap:24px; margin-top:16px;">
+                        <div><div class="showcase-mini-label">Interview</div><div class="showcase-mini-value" style="color:{MINT_A};">Live</div></div>
+                        <div><div class="showcase-mini-label">Signals reviewed</div><div class="showcase-mini-value">3</div></div>
+                        <div><div class="showcase-mini-label">Recruiter review</div><div class="showcase-mini-value" style="color:{GOLD};">Required</div></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    with tab_scoring:
+        scol1, scol2 = st.columns([1, 1.4], gap="medium")
+        with scol1:
+            st.markdown(f"""
+                <div style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:10px 0;">
+                    <div class="score-ring" style="background: conic-gradient({MINT_A} 94%, rgba(255,255,255,0.14) 94% 100%);">
+                        <div class="score-ring-inner" style="background:#0E241D;">
+                            <div class="score-ring-value" style="color:{MINT_A};">94</div>
+                            <div class="score-ring-unit" style="color:#9BB8AE;">/ 100</div>
+                        </div>
+                    </div>
+                    <div class="score-band-pill" style="background:{MINT_A}18; color:{MINT_A}; border-color:{MINT_A}44;">AI-assisted match score</div>
+                </div>
+                """, unsafe_allow_html=True)
+        with scol2:
+            criteria = [("Skills", 96, MINT_A), ("Experience", 91, SIGNAL), ("Education", 88, VIOLET), ("Role alignment", 93, GOLD)]
+            bars = "".join(f"""
+                <div style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:#CFE8DF; margin-bottom:4px;">
+                        <span>{name}</span><span style="font-weight:700; color:{c};">{v}%</span>
+                    </div>
+                    <div class="showcase-bar-track"><div class="showcase-bar-fill" style="width:{v}%; background:linear-gradient(90deg,{c}aa,{c});"></div></div>
+                </div>
+                """ for name, v, c in criteria)
+            st.markdown(bars, unsafe_allow_html=True)
+            st.caption("Illustrative weighting — real per-candidate breakdowns appear inside the app once you sign in.")
+
+    with tab_interview:
+        st.markdown(f"""
+            <div class="showcase-terminal">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:1.5px; color:{MINT_A}; text-transform:uppercase;">◆ AI Interviewer</div>
+                    <div style="display:flex; align-items:center; gap:6px; font-family:'IBM Plex Mono'; font-size:10.5px; color:#9BB8AE;">
+                        <span style="width:7px;height:7px;border-radius:50%;background:#FF6B6B;box-shadow:0 0 0 4px rgba(255,107,107,0.25);"></span> LIVE
+                    </div>
+                </div>
+                <div style="color:#F4FFFA; font-size:14px; margin-top:14px; line-height:1.6;">
+                    "Walk me through a production outage you diagnosed under load."
+                </div>
+                <div style="color:#9BB8AE; font-size:12.5px; margin-top:10px; font-family:'IBM Plex Mono'; line-height:1.7;">
+                    &gt; Candidate is responding — the transcript is captured live and reviewable after the interview ends.
+                </div>
+                <div style="display:flex; gap:24px; margin-top:18px;">
+                    <div><div class="showcase-mini-label">Technical depth</div><div class="showcase-mini-value" style="color:{MINT_A};">92</div></div>
+                    <div><div class="showcase-mini-label">Communication</div><div class="showcase-mini-value" style="color:{MINT_A};">88</div></div>
+                    <div><div class="showcase-mini-label">Problem solving</div><div class="showcase-mini-value" style="color:{MINT_A};">95</div></div>
+                </div>
+                <div style="margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.08); color:#9BB8AE; font-size:11.5px;">
+                    Every signal here is a recommendation — a recruiter reviews the transcript and confirms before any decision.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)  # /showcase-shell
+
+    # ---- Trust ----
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center; margin-top:34px;">● Built for Accountable Hiring</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:20px;">Trust, by design</div>',
+        unsafe_allow_html=True,
+    )
+    trust_items = [
+        ("🔍", "Explainable scoring", "Every score traces back to defined, weighted criteria tied to the job — never a black box."),
+        ("🧑\u200d⚖️", "Human review required", "AI output is a recommendation. Recruiters see the full reasoning and make the final call."),
+        ("🔐", "Role-isolated data", "Recruiter, candidate, and admin data are scoped by portal, with audit logging on admin actions."),
+        ("⚙️", "Configurable criteria", "Scoring weights and required skills are set per job — not a fixed, opaque formula."),
+    ]
+    tcols = st.columns(4, gap="medium")
+    for col, (icon, title, body) in zip(tcols, trust_items):
+        with col:
+            st.markdown(f"""
+                <div class="glass-flat" style="height:100%;">
+                    <div style="font-size:20px;">{icon}</div>
+                    <div style="font-weight:800; font-size:13.5px; color:{INK}; margin-top:8px; font-family:'Space Grotesk';">{title}</div>
+                    <div style="color:{MIST}; font-size:12px; margin-top:6px; line-height:1.55;">{body}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+
+def landing_faq_section():
+    """Objection-handling FAQ, wrapped so native st.expander picks up
+    the elevated glass + shadow styling defined in .faq-wrap."""
+    st.markdown(
+        '<div class="aperture-eyebrow" style="justify-content:center; margin-top:36px;">● Before You Ask</div>'
+        f'<div style="text-align:center; font-size:24px; font-weight:800; color:{INK}; '
+        'font-family:\'Space Grotesk\'; margin-bottom:20px;">Straight answers, no fine print</div>',
+        unsafe_allow_html=True,
+    )
+    faqs = [
+        ("Does TalentOps replace recruiters?",
+         "No. TalentOps screens and structures the first interview — recruiters review the scores, transcripts, and reasoning, and make every hiring decision themselves."),
+        ("How does AI scoring work?",
+         "Resumes are scored against the job on defined, weighted criteria — skills, experience, education, and role alignment — not open-ended judgment. The breakdown is visible, not a black box."),
+        ("Can candidates request a human interview?",
+         "Yes. The AI interview is a first-round step, not the only step — candidates can request a human interview at any point in their portal."),
+        ("How is candidate data handled?",
+         "Access is role-based and scoped by portal — recruiter, candidate, and admin data are kept separate, with audit logging on admin actions."),
+        ("Can recruiters override AI scores?",
+         "Yes. Every AI score and interview result is a recommendation, not a verdict — recruiters can review the full transcript and override any score or decision."),
+        ("Does the AI interviewer introduce bias?",
+         "Scoring runs on defined, weighted criteria tied to the job description. Every score is visible and reviewable by a human before it affects a candidate's status."),
+        ("Can this replace or integrate with our existing ATS?",
+         "It's built to run as a standalone hiring workflow — job postings, resume scoring, and interviews in one place — so you're not stitching together separate tools."),
+        ("How long does setup take?",
+         "Creating a recruiter account and posting your first job takes minutes — there's no setup call required to start screening resumes."),
+    ]
+    st.markdown('<div class="faq-wrap">', unsafe_allow_html=True)
+    for q, a in faqs:
+        with st.expander(q):
+            st.markdown(f'<div style="color:{MIST}; font-size:13px; line-height:1.6;">{a}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+def landing_terminal_cta(button_label="Enter Recruiter Portal →", key="terminal_cta_btn"):
+    """Closing CTA panel styled like a dark 'terminal' surface with a
+    perspective-warped grid for depth. Returns True the run the button
+    is clicked, so the caller can drive session_state / st.rerun()."""
+    st.markdown(f"""
+        <div class="terminal-cta">
+            <div class="terminal-shine"></div>
+            <div class="terminal-cta-inner">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:2px;
+                    color:{MINT_A}; text-transform:uppercase; margin-bottom:14px;">◆ Ready When You Are</div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:800;
+                    color:#FFFFFF; line-height:1.25; max-width:520px;">
+                    Stop reading resumes.<br>Start reviewing decisions.
+                </div>
+                <div style="color:#CFF3E6; font-size:13px; margin-top:14px; max-width:440px; line-height:1.6;">
+                    No setup calls required — create a recruiter account and post your first job in minutes.
+                    Candidate and recruiter data stay isolated by design.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    _, btn_col, _ = st.columns([1, 1, 1])
+    with btn_col:
+        return st.button(button_label, use_container_width=True, type="primary", key=key)
 
 
 def sidebar_logo():
@@ -1270,6 +1914,110 @@ def ats_donut(buckets, colors, total, center_label="Total Candidates"):
             <div class="ats-legend">{legend_rows}</div>
         </div>
         """, unsafe_allow_html=True)
+
+
+def ats_score_card(score, decision=None, confidence=None, matched_skills=None,
+                    missing_skills=None, job_role=None, show_evidence=True):
+    """Single-candidate ATS match score: a circular conic-gradient ring
+    (banded to the same 85/70/50 thresholds used everywhere else in the
+    app) plus decision/confidence facts, and an optional expandable
+    'How this score was calculated' panel.
+
+    Deliberately shows only what the ATS engine actually returns --
+    matched/missing skills as evidence -- never a fabricated weighted
+    breakdown (skills/experience/education % splits) the engine doesn't
+    compute. Labeled "AI-assisted match score" rather than a verdict,
+    per the product-language guidance: this is decision support, not
+    an automated hire/reject call.
+
+    score:           0-100 int/float.
+    decision, confidence: optional strings from generate_recommendation().
+    matched_skills, missing_skills: optional lists of strings.
+    job_role:        optional target-role label shown under the eyebrow.
+    show_evidence:   set False when the caller already renders matched/
+                      missing skill lists elsewhere (e.g. full_report_modal)
+                      to avoid showing the same evidence twice.
+    """
+    try:
+        score = int(round(float(score or 0)))
+    except (TypeError, ValueError):
+        score = 0
+    score = max(0, min(100, score))
+
+    matched_skills = [s.strip() for s in (matched_skills or []) if s and s.strip()]
+    missing_skills = [s.strip() for s in (missing_skills or []) if s and s.strip()]
+
+    if score >= 85:
+        band_color, band_label = VERDICT, "Highly Recommended"
+    elif score >= 70:
+        band_color, band_label = SIGNAL, "Recommended"
+    elif score >= 50:
+        band_color, band_label = CAUTION, "Consider"
+    else:
+        band_color, band_label = RISK, "Not Recommended"
+
+    role_line = (
+        f'<div style="color:{MIST}; font-size:12.5px; margin-top:2px;">'
+        f'Target role: <span style="color:{SIGNAL}; font-weight:600;">{job_role}</span></div>'
+        if job_role else ""
+    )
+
+    facts = ""
+    if decision:
+        facts += (
+            f'<div class="score-fact"><span class="score-fact-label">Decision</span>'
+            f'<span class="score-fact-value" style="color:{band_color};">{decision}</span></div>'
+        )
+    if confidence:
+        facts += (
+            f'<div class="score-fact"><span class="score-fact-label">Confidence</span>'
+            f'<span class="score-fact-value">{confidence}</span></div>'
+        )
+
+    # Neutral track color (not theme-swapped) so the ring reads correctly
+    # on both light glass and dark panel surfaces without needing the
+    # inline conic-gradient itself to be repainted per-theme.
+    track = "rgba(148,163,160,0.25)"
+
+    st.markdown(f"""
+        <div class="glass score-card">
+            <div class="score-ring-col">
+                <div class="score-ring" style="background: conic-gradient({band_color} {score}%, {track} {score}% 100%);">
+                    <div class="score-ring-inner">
+                        <div class="score-ring-value" style="color:{band_color};">{score}</div>
+                        <div class="score-ring-unit">/ 100</div>
+                    </div>
+                </div>
+                <div class="score-band-pill" style="background:{band_color}18; color:{band_color}; border-color:{band_color}44;">{band_label}</div>
+            </div>
+            <div class="score-detail-col">
+                <div class="aperture-eyebrow" style="margin:0 0 6px 0;">AI-assisted match score</div>
+                {role_line}
+                <div class="score-facts">{facts}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    if show_evidence and (matched_skills or missing_skills):
+        with st.expander("How this score was calculated", expanded=False):
+            st.caption(
+                "Evidence detected by the resume parser and skill matcher — "
+                "not a guarantee of fit. A human reviewer should confirm "
+                "before any hiring decision."
+            )
+            ev1, ev2 = st.columns(2)
+            with ev1:
+                st.markdown(
+                    f'<div style="font-weight:700; font-size:12.5px; color:{VERDICT}; margin-bottom:6px;">'
+                    f'✓ Matched — evidence found</div>', unsafe_allow_html=True
+                )
+                chip_list(matched_skills, VERDICT)
+            with ev2:
+                st.markdown(
+                    f'<div style="font-weight:700; font-size:12.5px; color:{RISK}; margin-bottom:6px;">'
+                    f'✕ Missing — not detected</div>', unsafe_allow_html=True
+                )
+                chip_list(missing_skills, RISK)
 
 
 def pipeline_funnel(stages):
@@ -1574,16 +2322,70 @@ def full_report_modal(details, ats_result, recommendation, job_role):
     falls back to an inline expander on older Streamlit versions.
     """
     def _render():
-        st.markdown(f"**Target Role:** {job_role}")
-        st.divider()
+        ats_score_card(
+            ats_result["ats"],
+            decision=recommendation.get("decision"),
+            confidence=recommendation.get("confidence"),
+            matched_skills=ats_result.get("matched_skills", []),
+            missing_skills=ats_result.get("missing_skills", []),
+            job_role=job_role,
+            show_evidence=False,  # matched/missing already shown below
+        )
 
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            metric_card("ATS Score", f"{ats_result['ats']}%", "🎯", SIGNAL)
-        with c2:
-            metric_card("Decision", recommendation["decision"], "⚙", VERDICT)
-        with c3:
-            metric_card("Confidence", recommendation["confidence"], "📈", CAUTION)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("**Candidate Details**")
+        profile_field("Full Name", details.get("name", ""), "👤")
+        profile_field("Email", details.get("email", ""), "✉")
+        profile_field("Phone", details.get("phone", ""), "📞")
+        profile_field("Education", details.get("education", ""), "🎓")
+        profile_field("Experience", details.get("experience", ""), "🧭")
+
+        st.markdown("**Matched Skills**")
+        chip_list(ats_result.get("matched_skills", []), VERDICT)
+
+        st.markdown("**Missing Skills**")
+        chip_list(ats_result.get("missing_skills", []), RISK)
+
+        list_card("Projects", details.get("projects", []), "🧩", SIGNAL)
+        list_card("Certifications", details.get("certifications", []), "🎓", VERDICT)
+
+    if hasattr(st, "dialog"):
+        @st.dialog(f"Full Analysis Report — {details.get('name', 'Candidate')}", width="large")
+        def _modal():
+            _render()
+        _modal()
+    else:
+        with st.expander(f"📊 Full Analysis Report — {details.get('name', 'Candidate')}", expanded=True):
+            _render()
+
+
+def footer():
+    st.markdown(f"""
+    <div style="margin-top: 44px; padding: 18px; text-align: center; border-top: 1px solid {LINE};
+        color: {MIST}; font-size: 11px; font-family: 'IBM Plex Mono';">
+        &#11049; TALENTOPS AI &nbsp;•&nbsp; POLISHED MINT EDITION &nbsp;•&nbsp; ENTERPRISE INTELLIGENCE NETWORK ENGINE
+v style="font-size:16px; font-weight:800; color:{INK}; font-family:'Space Grotesk';">{title}</div>
+                {sub}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+def full_report_modal(details, ats_result, recommendation, job_role):
+    """
+    Full candidate report. Uses st.dialog when available (Streamlit >= 1.31);
+    falls back to an inline expander on older Streamlit versions.
+    """
+    def _render():
+        ats_score_card(
+            ats_result["ats"],
+            decision=recommendation.get("decision"),
+            confidence=recommendation.get("confidence"),
+            matched_skills=ats_result.get("matched_skills", []),
+            missing_skills=ats_result.get("missing_skills", []),
+            job_role=job_role,
+            show_evidence=False,  # matched/missing already shown below
+        )
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("**Candidate Details**")
