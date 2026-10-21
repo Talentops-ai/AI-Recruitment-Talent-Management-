@@ -6,7 +6,7 @@ app deploy link -> https://talentops-ai-recruitment-copilot.streamlit.app/
 
 <p align="center">
   <img
-    src="assets/Screenshot%202026-10-21%20095708.png"
+    src="Screenshot 2026-10-21 095708.png"
     alt="AI Recruitment Copilot landing page"
     width="100%"
   />
